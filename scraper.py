@@ -3,11 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 
-
 url = "https://www.unibe.ch/universitaet/campus__und__infrastruktur/universitaetssport/sportangebot/fitnessraeume/readhtml2?decoding=utf-8&url=https://www.zssw.unibe.ch/usp/zms/templates/crowdmonitoring/_display-spaces-zssw.php"
 
 try:
-    response = requests.get(url, timeout=180)  # Timeout set to 3 min
+    response = requests.get(url, timeout=100)  # Timeout set to 100 seconds
     response.raise_for_status()  # Raise an exception for HTTP errors
 
     # Parse the HTML
@@ -29,7 +28,9 @@ try:
             pd.DataFrame(
                 [
                     {
-                        "datetime": pd.Timestamp(datetime.datetime.today()),
+                        "datetime": pd.Timestamp(datetime.datetime.today())
+                        .tz_localize(tz="UTC")
+                        .tz_convert("Europe/Zurich"),
                         "actual_occupancy": occupancy_numbers[0],
                         "max_occupancy": occupancy_numbers[1],
                     }
